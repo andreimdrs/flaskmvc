@@ -1,0 +1,24 @@
+{% extends "componentes/layout.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <h5 class="card-header">Destaque</h5>
+        <div class="card-body">
+            <h5 class="card-title">Emails</h5>
+            <p class="card-text">
+                {% for user in emails %}
+                <a href="{{ url_for('user_page', email=user['email']) }}" class="btn btn-link">{{ user['email']
+                    }}</a><br>
+                {% else %}
+                Nenhum usuário encontrado.
+                {% endfor %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

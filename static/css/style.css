@@ -1,0 +1,13 @@
+.cabecalho {
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f0f0;
+    /* Outras propriedades que você desejar adicionar */
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #f0f0f0;
+    /* Exemplo de cor de fundo */
+}
