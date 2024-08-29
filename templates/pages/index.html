@@ -12,10 +12,13 @@ Home
             <h5 class="card-title">Emails</h5>
             <p class="card-text">
                 {% for user in emails %}
-                <a href="{{ url_for('user_page', email=user['email']) }}" class="btn btn-link">{{ user['email']
-                    }}</a><br>
+                    {% if user['email'] == session['email'] %}
+                        <a href="{{ url_for('user_page', email=user['email']) }}" class="btn btn-link">Seu Email: {{ user['email'] }}</a><br>
+                    {% else %}
+                        {{ user['email'] }}<br>
+                    {% endif %}
                 {% else %}
-                Nenhum usuário encontrado.
+                    Nenhum usuário encontrado.
                 {% endfor %}
             </p>
         </div>

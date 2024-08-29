@@ -25,14 +25,15 @@ Página do Usuário
                         value="{{ user['senha'] }}" readonly>
                     <button type="button" class="btn btn-primary mt-2" id="edit-password">Editar</button>
                 </div>
+                
                 <button type="submit" class="btn btn-success mt-2" id="update-button"
                     style="display: none;">Atualizar</button>
                 <a href="{{ url_for('index') }}" class="btn btn-secondary mt-2">Voltar</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary mt-2">Deslogar</a>
             </form>
         </div>
     </div>
 </div>
-
 <script>
     document.getElementById('edit-email').addEventListener('click', function () {
         document.getElementById('email').removeAttribute('readonly');

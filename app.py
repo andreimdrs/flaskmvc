@@ -3,6 +3,8 @@ import sqlite3
 
 app = Flask(__name__)
 
+app.config['SECRET_KEY'] = '9t8b2489vh42v2vv'
+
 def get_db_connection():
     conn = sqlite3.connect('database.sqlite')
     conn.row_factory = sqlite3.Row  # Opcional: permite acessar colunas pelo nome
@@ -42,17 +44,19 @@ def update_user(email):
 
 @app.route('/user/<email>')
 def user_page(email):
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM usuario WHERE email = ?", (email,))
-    user = cursor.fetchone()
-    conn.close()
+    if session['email'] == email:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM usuario WHERE email = ?", (email,))
+        user = cursor.fetchone()
+        conn.close()
 
-    if user:
-        return render_template('pages/user.html', user=user)
+        if user:
+            return render_template('pages/user.html', user=user)
+        else:
+            return "Usuário não encontrado", 404
     else:
-        return "Usuário não encontrado", 404
-
+        return redirect(url_for('login'))
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -69,12 +73,15 @@ def login():
 
             if user and user['senha'] == senha:
                 session['email'] = email
+                session['id'] = user['id']
                 return redirect(url_for('index', email=email))
         except KeyError as e:
                 return "Email ou senha inválidos", 401
         finally:
             conn.close()  # Fechar a conexão
-            
+    else:
+        return render_template('pages/login.html')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -99,7 +106,37 @@ def register():
             conn.close()  # Fechar a conexão
     else:
         return render_template('pages/register.html')
+@app.route('/cadastro_livros', methods=['POST', 'GET'])
+def cadastro_livros():
+    if request.method == 'POST':
+        session
+        # Verificando se o usuário existe no banco de dados
+        # Verificando se o usuário existe no banco de dados
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        user = cursor.fetchone()
+        conn.close()
+
+        titulo = request.form['titulo']
+        autor = request.form['autor']
+        texto = request.form['texto']
+        usuario_id = session.get('id') 
+
+        # Inserindo dados na tabela
+        sql = "INSERT INTO livros (titulo, autor, texto, id_usuario) VALUES (?,?,?,?)"
+        cursor.execute(sql, (titulo, autor, texto, usuario_id))
+        conn.commit()
+        conn.close()
+    else:
+        return render_template('pages/cadastro_livros.html')
+@app.route('/logout')
+def logout():
+    # Remove a informação do usuário da sessão
+    session.pop('email', None)  # 'email' é a chave usada para armazenar o email do usuário
     
+    # Redireciona para a página inicial ou outra página desejada
+    return redirect(url_for('index'))
+        
 @app.route("/create_database")
 def create_database():
     db = 'database.sqlite'
