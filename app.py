@@ -1,4 +1,4 @@
-from flask import Flask, url_for, request, render_template, redirect 
+from flask import Flask, url_for, request, render_template, redirect, session
 import sqlite3
 
 app = Flask(__name__)
@@ -53,6 +53,28 @@ def user_page(email):
     else:
         return "Usuário não encontrado", 404
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        try:
+            email = request.form['email']
+            senha = request.form['password']
+        
+            # Verificando se o usuário existe no banco de dados
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM usuario WHERE email =?", (email,))
+            user = cursor.fetchone()
+            conn.close()
+
+            if user and user['senha'] == senha:
+                session['email'] = email
+                return redirect(url_for('index', email=email))
+        except KeyError as e:
+                return "Email ou senha inválidos", 401
+        finally:
+            conn.close()  # Fechar a conexão
+            
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
